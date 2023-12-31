@@ -11,7 +11,7 @@ Effect:
 ![scroll](https://github.com/the-overdriven/morrowind-zoom-and-quickloot-compatibility/assets/100090726/99d8bf43-6aa0-4b1d-a889-86d5728ca6ae)
   
 ### How to have highlighted option in ~~orange~~ pumpkin colour?
-Open Morrowind.ini and change color_active from `255,255,255` to `255,117,24`
+Open Morrowind.ini and change the **color_active** value from `255,255,255` to `255,117,24`
 
 ### Why I prevent zooming out to value smaller than 2.5?
 Zoom=1 is the default zoom, but I want to use the Zoom mod not only for zooming in but also for zooming out, further than default camera allows, but also not too much. For this reason, I increase FOV to huge value, so that camera looks "normal" in the middle point. That middle point seems to be at Zoom=~2.5. I set following MGE XE settings: Horz. FOV = 150, 3rd person camera Y offset = -260, Z offset = 80. Thanks to this scrolling in Morrowind.exe imitates the camera scroll from OpenMW.
