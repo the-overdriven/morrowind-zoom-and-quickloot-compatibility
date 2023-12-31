@@ -15,6 +15,8 @@ local fader = faderController:new()
 --- @type tes3inputController
 local IC
 
+local QuickLoot = require("QuickLoot.interop")
+
 local function hold()
 	if tes3.menuMode() then	return end
 	local key = config.zoomKey
@@ -31,17 +33,17 @@ local function hold()
 	if tes3.isKeyEqual({ actual = actual, expected = key }) then
 		if zoom < config.maxZoom then
 			fader:activate()
-			mge.camera.zoomIn({ amount = config.zoomStrength })
-			util.updateDistantLandConfig(zoom)
+			mge.camera.zoomIn({ amount = config.zoomStrength * 2 })
+			--util.updateDistantLandConfig(zoom)
 		end
 		return
 	else
 		if zoom > util.noZoom then
-			mge.camera.zoomOut({ amount = config.zoomStrength * 1.5 })
+			mge.camera.zoomOut({ amount = config.zoomStrength * 2 })
 		elseif math.isclose(mge.camera.zoom, util.noZoom) then
 			fader:deactivate()
 		end
-		util.updateDistantLandConfig(zoom)
+		--util.updateDistantLandConfig(zoom)
 	end
 end
 
@@ -87,23 +89,33 @@ local function mouse(e)
 		return
 	end
 
+	if (QuickLoot.isActive) then
+		return
+	end
+
 	local delta = e.delta
 	local zoomIn = (delta > 0)
 	local mult = math.abs(delta / 120)
 	if zoomIn then
 		fader:activate()
 		mge.camera.zoomIn({
-			amount = config.zoomStrength * mult
+			amount = config.zoomStrength * mult * 2.5 -- zoom quicker! was 2.6
 		})
-		util.updateDistantLandConfig(mge.camera.zoom)
+		--util.updateDistantLandConfig(mge.camera.zoom)
 	else
 		if mge.camera.zoom == util.noZoom then
 			fader:deactivate()
 		end
+		local amount = config.zoomStrength * mult * 2.5 -- zoom quicker! was 3
+		local zoom = mge.camera.zoom
+		if (zoom - amount) < 2.5 then
+			amount = zoom - 2.5 -- prevent zooming out too much, zoom:2.5 should be minimum
+		end
 		mge.camera.zoomOut({
-			amount = config.zoomStrength * mult
+			amount = amount
 		})
-		util.updateDistantLandConfig(mge.camera.zoom)
+		
+		--util.updateDistantLandConfig(mge.camera.zoom)
 	end
 end
 
@@ -128,4 +140,6 @@ event.register(tes3.event.initialized, function()
 	mge.macros.decreaseZoom()
 	IC = tes3.worldController.inputController
 	register()
+
+	mge.camera.zoomIn({ amount = 1.5 }) -- default zoom is 1, zoom in on game load from 1 to 2.5 (1 + 1.5 = 2)
 end)
