@@ -131,6 +131,14 @@ local function register()
 	end
 end
 
+local function onLoad()
+	local zoomLevelBeforeLoad = mge.camera.zoom
+	mge.camera.zoomOut({ amount = (zoomLevelBeforeLoad - 1) }) -- zoom out to show splash screen correctly
+end
+
+local function onLoaded()
+	mge.camera.zoomIn({ amount = 1.5 }) -- default zoom is 1, zoom in on game load from 1 to 2.5 (1 + 1.5 = 2)
+end
 
 event.register(tes3.event.initialized, function()
 	-- BUG: camera's zoom level isn't changed if not
@@ -140,6 +148,7 @@ event.register(tes3.event.initialized, function()
 	mge.macros.decreaseZoom()
 	IC = tes3.worldController.inputController
 	register()
-
-	mge.camera.zoomIn({ amount = 1.5 }) -- default zoom is 1, zoom in on game load from 1 to 2.5 (1 + 1.5 = 2)
 end)
+
+event.register(tes3.event.load, onLoad)
+event.register(tes3.event.loaded, onLoaded)
