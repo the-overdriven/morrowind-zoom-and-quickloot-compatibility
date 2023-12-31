@@ -56,7 +56,7 @@ local spacebarActivate = 0
 local currentInventorySize = nil
 
 -- Keep easy access to the menu.
-local quickLootGUI = nil
+quickLootGUI = nil
 
 -- Toggle if you're waiting for a key rebind
 local rebindTake = false
@@ -95,7 +95,10 @@ local function setSelectionIndex(index)
 		if (i == index) then
 			-- If this is the new index, set it to the active color.
 			local label = block:findChild(GUIID_QuickLoot_ContentBlock_ItemLabel)
+			
 			label.color = tes3ui.getPalette("active_color")
+			-- label.color = "255,0,0"
+
 		elseif (i == currentIndex) then
 			-- If this is the old index, change the color back to normal.
 			local label = block:findChild(GUIID_QuickLoot_ContentBlock_ItemLabel)
@@ -141,6 +144,7 @@ local function canLootObject()
 	if (lockNode) then
 		if ( config.hideLocked == true ) then
 			quickLootGUI.visible = false
+			interop.isActive = false
 		end
 		
 		-- If the container is locked, display lock level.
@@ -255,6 +259,7 @@ local function refreshItemsList()
 		if (cantLootReason == "Empty" and config.showPlants == false) then
 			if (currentTarget.object.organic == true) then
 				quickLootGUI.visible = false
+				interop.isActive = false
 			end
 		end
 
@@ -268,6 +273,7 @@ local function refreshItemsList()
 		denyLabel.visible = false
 	end
 	quickLootGUI.visible = true
+	interop.isActive = true
 	
 	-- Clone the object if necessary.
 	currentTarget:clone()
@@ -283,6 +289,7 @@ local function refreshItemsList()
 		if config.showPlants == false then
 			if (container.organic == true) then
 				quickLootGUI.visible = false
+				interop.isActive = false
 			end
 		end
 		return
@@ -292,12 +299,14 @@ local function refreshItemsList()
 	if config.showPlants == false then
 		if (container.organic == true) then
 			quickLootGUI.visible = false
+			interop.isActive = false
 		end
 	end
 
 	for _, stack in pairs(container.inventory) do
 		--
 		quickLootGUI.visible = true
+		interop.isActive = true
 		local item = stack.object
 			
 		-- Our container block for this item.
@@ -407,6 +416,7 @@ local function clearQuickLootMenu(destroyMenu)
 	if (destroyMenu and quickLootGUI) then
 		quickLootGUI:destroy()
 		quickLootGUI = nil
+		interop.isActive = false
 	end
 end
 
@@ -751,3 +761,4 @@ local function onInitialized()
 	mwse.log("[Morrowind Quick Loot] Initialized")
 end
 event.register("initialized", onInitialized)
+
